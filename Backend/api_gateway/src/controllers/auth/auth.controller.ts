@@ -5,15 +5,21 @@ import {
   Inject,
   HttpStatus,
   HttpException,
+  Get,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('')
 export class AuthController {
   constructor(
-    @Inject('AUTHENTIFICATION_SERVICE')
+    @Inject('auth_service')
     private readonly authServiceClient: ClientProxy,
   ) {}
+
+  @Get('health')
+  async healthCheck() {
+    return { status: 200 };
+  }
 
   @Post('login')
   async login(@Body() loginDto: { email: string; password: string }) {

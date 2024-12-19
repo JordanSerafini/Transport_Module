@@ -1,0 +1,3 @@
+nest g module routes
+nest g service routes --no-spec
+nest g controller routes --no-spec

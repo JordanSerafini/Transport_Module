@@ -1,0 +1,82 @@
+import { Controller } from '@nestjs/common';
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { ShipmentsService } from './shipments.service';
+
+@Controller('shipments')
+export class ShipmentsController {
+  constructor(private readonly shipmentsService: ShipmentsService) {}
+
+  @MessagePattern({ cmd: 'health_shipments' })
+  healthCheck() {
+    return { status: 'Shipments service is healthy' };
+  }
+
+  @MessagePattern({ cmd: 'get_all_shipments' })
+  getAllShipments(
+    @Payload()
+    data: {
+      page?: number;
+      limit?: number;
+      searchQuery?: string;
+    },
+  ) {
+    const { page = 1, limit = 10, searchQuery } = data;
+    return this.shipmentsService.getAllShipments(page, limit, searchQuery);
+  }
+
+  @MessagePattern({ cmd: 'get_shipment_by_id' })
+  getShipmentById(@Payload() data: { shipmentId: number }) {
+    return this.shipmentsService.getShipmentById(data.shipmentId);
+  }
+
+  @MessagePattern({ cmd: 'create_shipment' })
+  createShipment(
+    @Payload()
+    data: {
+      order_id: number;
+      truck_id?: number;
+      driver_id?: number;
+      route_id?: number;
+      status_id?: number;
+    },
+  ) {
+    return this.shipmentsService.createShipment(data);
+  }
+
+  @MessagePattern({ cmd: 'update_shipment' })
+  updateShipment(
+    @Payload()
+    data: {
+      shipmentId: number;
+      truck_id?: number;
+      driver_id?: number;
+      route_id?: number;
+      status_id?: number;
+    },
+  ) {
+    return this.shipmentsService.updateShipment(data.shipmentId, data);
+  }
+
+  @MessagePattern({ cmd: 'delete_shipment' })
+  deleteShipment(@Payload() data: { shipmentId: number }) {
+    return this.shipmentsService.deleteShipment(data.shipmentId);
+  }
+
+  @MessagePattern({ cmd: 'get_shipment_events' })
+  getShipmentEvents(@Payload() data: { shipmentId: number }) {
+    return this.shipmentsService.getShipmentEvents(data.shipmentId);
+  }
+
+  @MessagePattern({ cmd: 'add_shipment_event' })
+  addShipmentEvent(
+    @Payload()
+    data: {
+      shipmentId: number;
+      event_status_id: number;
+      comment?: string;
+      event_time?: string;
+    },
+  ) {
+    return this.shipmentsService.addShipmentEvent(data.shipmentId, data);
+  }
+}

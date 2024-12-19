@@ -17,24 +17,74 @@ services:
       timeout: 5s
       retries: 3
 
-  # api_gateway:
-  #   image: node:alpine
-  #   container_name: api_gateway
-  #   working_dir: /app
-  #   restart: always
-  #   volumes:
-  #     - ./Backend/api_gateway:/app
-  #     - /app/node_modules
-  #   ports:
-  #     - 3000:3000
-  #   networks:
-  #     - transport_network
-  #   command: sh -c "npm install && npm run start:dev"
-  #   healthcheck:
-  #     test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 3
+  api_gateway:
+    image: node:alpine
+    container_name: api_gateway
+    working_dir: /app
+    restart: always
+    volumes:
+      - ./Backend/api_gateway:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    networks:
+      - transport_network
+    command: sh -c "npm install && npm run start:dev"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  authentification_service:
+    image: node:alpine
+    container_name: authentification_service
+    working_dir: /app
+    restart: always
+    volumes:
+      - ./Backend/authentification_service:/app
+      - /app/node_modules
+    ports:
+      - 3001:3001
+    networks:
+      - transport_network
+    command: sh -c "npm install && npm run start:dev"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - PG_HOST=192.168.1.10
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DATABASE=transport
+
+  shipments_service:
+    image: node:alpine
+    container_name: shipments_service
+    working_dir: /app
+    restart: always
+    volumes:
+      - ./Backend/shipments_service:/app
+      - /app/node_modules
+    ports:
+      - 3009:3009
+    networks:
+      - transport_network
+    command: sh -c "npm install && npm run start:dev"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/trucks/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    environment:
+      - PG_HOST=192.168.1.10
+      - PG_PORT=5432
+      - PG_USER=postgres
+      - PG_PASSWORD=postgres
+      - PG_DATABASE=transport
 
   postgres:
     image: postgres:12
