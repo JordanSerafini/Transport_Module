@@ -45,11 +45,13 @@ export class RoutesController {
     @Payload()
     data: {
       routeId: number;
+      company_id?: number;
       name?: string;
       start_warehouse_id?: number;
       end_warehouse_id?: number;
     },
   ) {
+    console.log('Received data:', data); // Debug log
     return this.routesService.updateRoute(data.routeId, data);
   }
 

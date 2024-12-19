@@ -2,12 +2,13 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  Inject,
 } from '@nestjs/common';
 import { Pool } from 'pg';
 
 @Injectable()
 export class RoutesService {
-  constructor(private readonly pool: Pool) {}
+  constructor(@Inject('PG_CONNECTION') private readonly pool: Pool) {}
 
   // Récupérer toutes les routes avec pagination et recherche
   async getAllRoutes(page: number, limit: number, searchQuery?: string) {
@@ -84,11 +85,21 @@ export class RoutesService {
   async updateRoute(
     routeId: number,
     updates: {
+      company_id?: number;
       name?: string;
       start_warehouse_id?: number;
       end_warehouse_id?: number;
     },
   ) {
+    // Validation stricte : suppression de toute clé invalide
+    delete updates['routeId'];
+
+    // Vérification : au moins un champ à mettre à jour
+    if (!updates || Object.keys(updates).length === 0) {
+      throw new BadRequestException('No fields to update.');
+    }
+
+    // Génération des champs SQL pour la mise à jour
     const fields = Object.keys(updates)
       .map((key, index) => `${key} = $${index + 2}`)
       .join(', ');
@@ -101,13 +112,17 @@ export class RoutesService {
     `;
     const values = [routeId, ...Object.values(updates)];
 
+    // console.log('SQL Query:', query);
+    // console.log('SQL Values:', values);
+
     try {
       const result = await this.pool.query(query, values);
       if (result.rows.length === 0) {
-        throw new NotFoundException('Route not found.');
+        throw new NotFoundException('Route not found or already deleted.');
       }
       return result.rows[0];
     } catch (error) {
+      console.error('SQL Error:', error.message);
       throw new BadRequestException('Failed to update route.', error);
     }
   }

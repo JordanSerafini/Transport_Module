@@ -14,7 +14,8 @@ import { ClientProxy } from '@nestjs/microservices';
 @Controller('routes')
 export class RoutesController {
   constructor(
-    @Inject('routes_service') private readonly routesServiceClient: ClientProxy,
+    @Inject('shipments_service')
+    private readonly routesServiceClient: ClientProxy,
   ) {}
 
   // Vérification de la santé du microservice
@@ -62,18 +63,18 @@ export class RoutesController {
   // Mettre à jour une route
   @Put(':routeId')
   async updateRoute(
-    @Param('routeId') routeId: number,
+    @Param('routeId') routeId: string,
     @Body()
     body: {
+      company_id?: number;
       name?: string;
       start_warehouse_id?: number;
       end_warehouse_id?: number;
     },
   ) {
-    return this.routesServiceClient.send(
-      { cmd: 'update_route' },
-      { routeId, ...body },
-    );
+    const payload = { routeId: parseInt(routeId, 10), ...body };
+    //console.log('Sending to service:', payload); // Debug
+    return this.routesServiceClient.send({ cmd: 'update_route' }, payload);
   }
 
   // Supprimer une route (soft delete)
