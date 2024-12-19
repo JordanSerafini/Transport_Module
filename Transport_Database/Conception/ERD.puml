@@ -1,0 +1,358 @@
+@startuml Transport_UML
+
+' Définir le style des entités
+skinparam entity {
+  BackgroundColor<<PK>> LightBlue
+  BackgroundColor<<FK>> LightGreen
+  BorderColor Black
+  ArrowColor Black
+  FontName Arial
+  FontSize 12
+  AttributeFontSize 10
+}
+
+' Définir les entités
+
+entity "unit" as Unit <<PK>> {
+  * id : SERIAL
+  --
+  code : VARCHAR(20) <<UNIQUE>>
+  label : VARCHAR(50)
+}
+
+entity "address" as Address <<PK>> {
+  * id : SERIAL
+  --
+  street : VARCHAR(255)
+  city : VARCHAR(100) <<NOT NULL>>
+  state : VARCHAR(100)
+  country : VARCHAR(100) <<NOT NULL>>
+  postal_code : VARCHAR(20)
+  latitude : DECIMAL(9,6)
+  longitude : DECIMAL(9,6)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "company" as Company <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(100)
+  phone : VARCHAR(20)
+  timezone : VARCHAR(50) <<DEFAULT 'UTC'>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "customer" as Customer <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100) <<NOT NULL>>
+  email : VARCHAR(100)
+  phone : VARCHAR(20)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "warehouse" as Warehouse <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100) <<NOT NULL>>
+  capacity : INT <<CHECK (capacity >= 0)>>
+  warehouse_type : VARCHAR(50)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "truck" as Truck <<PK>> {
+  * id : SERIAL
+  --
+  license_plate : VARCHAR(20) <<UNIQUE, NOT NULL>>
+  capacity : INT <<CHECK (capacity >= 0)>>
+  model : VARCHAR(50)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "driver" as Driver <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100) <<NOT NULL>>
+  license_number : VARCHAR(50)
+  license_expiry_date : DATE
+  phone : VARCHAR(20)
+  driver_status : VARCHAR(50) <<DEFAULT 'ACTIVE'>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "product" as Product <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100) <<NOT NULL>>
+  weight : INT <<CHECK (weight >= 0)>>
+  description : TEXT
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "order_status" as OrderStatus <<PK>> {
+  * id : SERIAL
+  --
+  code : VARCHAR(50) <<UNIQUE, NOT NULL>>
+  label : VARCHAR(100)
+  is_final : BOOLEAN <<DEFAULT FALSE>>
+}
+
+entity "shipment_status" as ShipmentStatus <<PK>> {
+  * id : SERIAL
+  --
+  code : VARCHAR(50) <<UNIQUE, NOT NULL>>
+  label : VARCHAR(100)
+  is_final : BOOLEAN <<DEFAULT FALSE>>
+}
+
+entity "order" as Order <<PK>> {
+  * id : SERIAL
+  --
+  total_weight : INT <<CHECK (total_weight >= 0)>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "order_item" as OrderItem <<PK>> {
+  * id : SERIAL
+  --
+  quantity : INT <<CHECK (quantity > 0)>>
+  unit_weight : INT <<CHECK (unit_weight >= 0)>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "route" as Route <<PK>> {
+  * id : SERIAL
+  --
+  name : VARCHAR(100)
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "route_stop" as RouteStop <<PK>> {
+  * id : SERIAL
+  --
+  stop_order : INT <<CHECK (stop_order > 0)>>
+  stop_type : VARCHAR(50) <<DEFAULT 'WAREHOUSE'>>
+  arrival_eta : TIMESTAMP
+  departure_eta : TIMESTAMP
+  actual_arrival : TIMESTAMP
+  actual_departure : TIMESTAMP
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "shipment" as Shipment <<PK>> {
+  * id : SERIAL
+  --
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "shipment_event" as ShipmentEvent <<PK>> {
+  * id : SERIAL
+  --
+  event_time : TIMESTAMP <<DEFAULT NOW()>>
+  comment : TEXT
+}
+
+entity "user" as User <<PK>> {
+  * id : SERIAL
+  --
+  email : VARCHAR(100) <<UNIQUE, NOT NULL>>
+  password_hash : VARCHAR(255) <<NOT NULL>>
+  name : VARCHAR(100)
+  role : VARCHAR(50) <<DEFAULT 'USER', CHECK (role IN ('ADMIN','MANAGER','USER'))>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "invoice" as Invoice <<PK>> {
+  * id : SERIAL
+  --
+  invoice_number : VARCHAR(50) <<UNIQUE, NOT NULL>>
+  amount : DECIMAL(10,2) <<CHECK (amount >= 0), NOT NULL>>
+  currency : VARCHAR(10) <<DEFAULT 'EUR', CHECK (currency IN ('EUR','USD','GBP'))>>
+  issued_at : TIMESTAMP
+  paid_at : TIMESTAMP
+  due_date : TIMESTAMP
+  status : VARCHAR(50) <<DEFAULT 'PENDING', CHECK (status IN ('PENDING','PAID','OVERDUE'))>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "payment" as Payment <<PK>> {
+  * id : SERIAL
+  --
+  payment_method : VARCHAR(50) <<CHECK (payment_method IN ('CARD','BANK_TRANSFER','CASH'))>>
+  amount : DECIMAL(10,2) <<CHECK (amount >= 0), NOT NULL>>
+  paid_at : TIMESTAMP <<DEFAULT NOW()>>
+  note : TEXT
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "truck_maintenance" as TruckMaintenance <<PK>> {
+  * id : SERIAL
+  --
+  maintenance_date : TIMESTAMP <<DEFAULT NOW()>>
+  description : TEXT
+  cost : DECIMAL(10,2) <<CHECK (cost >= 0), NOT NULL>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+entity "kpi_snapshot" as KPISnapshot <<PK>> {
+  * id : SERIAL
+  --
+  period_start : DATE <<NOT NULL>>
+  period_end : DATE <<NOT NULL>>
+  total_orders : INT <<CHECK (total_orders >= 0)>>
+  on_time_deliveries : INT <<CHECK (on_time_deliveries >= 0)>>
+  late_deliveries : INT <<CHECK (late_deliveries >= 0)>>
+  total_revenue : DECIMAL(10,2) <<CHECK (total_revenue >= 0)>>
+  total_costs : DECIMAL(10,2) <<CHECK (total_costs >= 0)>>
+  created_at : TIMESTAMP <<DEFAULT NOW()>>
+}
+
+entity "notification" as Notification <<PK>> {
+  * id : SERIAL
+  --
+  notification_type : VARCHAR(50)
+  message : TEXT
+  is_read : BOOLEAN <<DEFAULT FALSE>>
+  created_at : TIMESTAMP
+  updated_at : TIMESTAMP
+  deleted_at : TIMESTAMP
+}
+
+' Définir les relations
+
+' company -> address
+Company }--|{ Address : "address_id"
+
+' customer -> company
+Customer }--|{ Company : "company_id"
+
+' customer -> address
+Customer }--|{ Address : "address_id"
+
+' warehouse -> company
+Warehouse }--|{ Company : "company_id"
+
+' warehouse -> address
+Warehouse }--|{ Address : "address_id"
+
+' truck -> company
+Truck }--|{ Company : "company_id"
+
+' driver -> company
+Driver }--|{ Company : "company_id"
+
+' product -> company
+Product }--|{ Company : "company_id"
+
+' product -> unit
+Product }--|{ Unit : "unit_id"
+
+' order -> company
+Order }--|{ Company : "company_id"
+
+' order -> customer
+Order }--|{ Customer : "customer_id"
+
+' order -> warehouse
+Order }--|{ Warehouse : "warehouse_id"
+
+' order -> order_status
+Order }--|{ OrderStatus : "status_id"
+
+' order_item -> order
+OrderItem }--|{ Order : "order_id"
+
+' order_item -> product
+OrderItem }--|{ Product : "product_id"
+
+' route -> company
+Route }--|{ Company : "company_id"
+
+' route -> warehouse (start)
+Route }--|| Warehouse : "start_warehouse_id"
+
+' route -> warehouse (end)
+Route }--|| Warehouse : "end_warehouse_id"
+
+' route_stop -> route
+RouteStop }--|{ Route : "route_id"
+
+' route_stop -> warehouse
+RouteStop }--|{ Warehouse : "warehouse_id"
+
+' shipment -> order
+Shipment }--|{ Order : "order_id"
+
+' shipment -> truck
+Shipment }--|{ Truck : "truck_id"
+
+' shipment -> driver
+Shipment }--|{ Driver : "driver_id"
+
+' shipment -> route
+Shipment }--|{ Route : "route_id"
+
+' shipment -> shipment_status
+Shipment }--|{ ShipmentStatus : "status_id"
+
+' shipment_event -> shipment
+ShipmentEvent }--|{ Shipment : "shipment_id"
+
+' shipment_event -> shipment_status
+ShipmentEvent }--|{ ShipmentStatus : "event_status_id"
+
+' user -> company
+User }--|{ Company : "company_id"
+
+' invoice -> order
+Invoice }--|{ Order : "order_id"
+
+' payment -> invoice
+Payment }--|{ Invoice : "invoice_id"
+
+' truck_maintenance -> truck
+TruckMaintenance }--|{ Truck : "truck_id"
+
+' kpi_snapshot -> company
+KPISnapshot }--|{ Company : "company_id"
+
+' notification -> company
+Notification }--|{ Company : "company_id"
+
+' notification -> user
+Notification }--|{ User : "user_id"
+
+@enduml
