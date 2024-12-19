@@ -1,6 +1,10 @@
+import Truckslist from "../../components/Shipments/Trucks/Truckslist"
+
 function Dashboard() {
   return (
-    <div>Dashboard</div>
+    <div>
+      <Truckslist />
+    </div>
   )
 }
 
