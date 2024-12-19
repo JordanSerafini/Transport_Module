@@ -95,13 +95,12 @@ export class ShipmentsService {
       throw new BadRequestException('No fields provided to update.');
     }
 
-    // Filtrer les clés valides (exclure `shipment_id` ou autres champs invalides)
     const filteredUpdates = Object.fromEntries(
       Object.entries(updates).filter(([key]) => key !== 'shipment_id'),
     );
 
     const fields = Object.keys(filteredUpdates)
-      .map((key, index) => `${key} = $${index + 2}`) // À partir de $2 car $1 est pour shipment_id
+      .map((key, index) => `${key} = $${index + 2}`)
       .join(', ');
 
     const query = `
@@ -111,9 +110,6 @@ export class ShipmentsService {
       RETURNING *
     `;
     const values = [shipment_id, ...Object.values(filteredUpdates)];
-
-    console.log('SQL Query:', query); // Déboguer la requête SQL
-    console.log('SQL Values:', values); // Déboguer les valeurs
 
     try {
       const result = await this.pool.query(query, values);
@@ -213,12 +209,10 @@ export class ShipmentsService {
   }) {
     const { shipment_id, event_id, ...updates } = data;
 
-    // Vérifier qu'il y a au moins un champ à mettre à jour
     if (Object.keys(updates).length === 0) {
       throw new BadRequestException('No fields to update.');
     }
 
-    // Générer les champs à mettre à jour dans la requête SQL
     const fields = Object.keys(updates)
       .map((key, index) => `${key} = $${index + 3}`)
       .join(', ');
@@ -238,14 +232,13 @@ export class ShipmentsService {
     try {
       const result = await this.pool.query(query, values);
 
-      // Si aucun événement n'a été mis à jour, lever une exception
       if (result.rows.length === 0) {
         throw new NotFoundException(
           'Shipment event not found or already deleted.',
         );
       }
 
-      return result.rows[0]; // Retourner l'événement mis à jour
+      return result.rows[0];
     } catch (error) {
       console.error('SQL Error:', error.message);
       throw new BadRequestException('Failed to update shipment event.', error);

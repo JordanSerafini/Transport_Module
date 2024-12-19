@@ -19,8 +19,8 @@ export class TrucksController {
 
   // Récupérer un camion spécifique
   @MessagePattern({ cmd: 'get_truck_by_id' })
-  getTruckById(@Payload() data: { truckId: number }) {
-    return this.trucksService.getTruckById(data.truckId);
+  getTruckById(@Payload() data: { truck_id: number }) {
+    return this.trucksService.getTruckById(data.truck_id);
   }
 
   // Créer un nouveau camion
@@ -28,7 +28,7 @@ export class TrucksController {
   createTruck(
     @Payload()
     data: {
-      companyId: number;
+      company_id: number;
       license_plate: string;
       capacity: number;
       model: string;
@@ -42,24 +42,24 @@ export class TrucksController {
   updateTruck(
     @Payload()
     data: {
-      truckId: number;
+      truck_id: number;
       updates: { license_plate?: string; capacity?: number; model?: string };
     },
   ) {
-    return this.trucksService.updateTruck(data.truckId, data.updates);
+    return this.trucksService.updateTruck(data.truck_id, data.updates);
   }
 
   // Supprimer un camion (soft delete)
   @MessagePattern({ cmd: 'delete_truck' })
-  deleteTruck(@Payload() data: { truckId: number }) {
-    return this.trucksService.deleteTruck(data.truckId);
+  deleteTruck(@Payload() data: { truck_id: number }) {
+    return this.trucksService.deleteTruck(data.truck_id);
   }
 
   // Récupérer les maintenances d'un camion
   @MessagePattern({ cmd: 'get_truck_maintenances' })
-  getTruckMaintenances(@Payload() data: { truckId: number }) {
-    console.log('Getting maintenances for truck:', data.truckId);
-    return this.trucksService.getTruckMaintenances(data.truckId);
+  getTruckMaintenances(@Payload() data: { truck_id: number }) {
+    console.log('Getting maintenances for truck:', data.truck_id);
+    return this.trucksService.getTruckMaintenances(data.truck_id);
   }
 
   // Ajouter une maintenance à un camion
@@ -67,13 +67,13 @@ export class TrucksController {
   addTruckMaintenance(
     @Payload()
     data: {
-      truckId: number;
+      truck_id: number;
       description: string;
       cost: number;
-      maintenanceDate?: string;
+      maintenance_date?: string;
     },
   ) {
-    return this.trucksService.addTruckMaintenance(data.truckId, data);
+    return this.trucksService.addTruckMaintenance(data.truck_id, data);
   }
 
   // Mettre à jour une maintenance d'un camion
@@ -81,18 +81,18 @@ export class TrucksController {
   updateTruckMaintenance(
     @Payload()
     data: {
-      truckId: number;
-      maintenanceId: number;
+      truck_id: number;
+      maintenance_id: number;
       updates: {
         description?: string;
         cost?: number;
-        maintenanceDate?: string;
+        maintenance_date?: string;
       };
     },
   ) {
     return this.trucksService.updateTruckMaintenance(
-      data.truckId,
-      data.maintenanceId,
+      data.truck_id,
+      data.maintenance_id,
       data.updates,
     );
   }
@@ -102,13 +102,13 @@ export class TrucksController {
   deleteTruckMaintenance(
     @Payload()
     data: {
-      truckId: number;
-      maintenanceId: number;
+      truck_id: number;
+      maintenance_id: number;
     },
   ) {
     return this.trucksService.deleteTruckMaintenance(
-      data.truckId,
-      data.maintenanceId,
+      data.truck_id,
+      data.maintenance_id,
     );
   }
 }

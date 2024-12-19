@@ -25,14 +25,17 @@ export class TrucksController {
 
   // Obtenir tous les camions pour une entreprise
   @Get()
-  getAllTrucks(@Query('companyId') companyId: number): Observable<any> {
-    return this.shipmentsService.send({ cmd: 'get_all_trucks' }, { companyId });
+  getAllTrucks(@Query('company_id') company_id: number): Observable<any> {
+    return this.shipmentsService.send(
+      { cmd: 'get_all_trucks' },
+      { company_id },
+    );
   }
 
   // Obtenir les détails d'un camion spécifique
-  @Get(':truckId')
-  getTruckById(@Param('truckId') truckId: number): Observable<any> {
-    return this.shipmentsService.send({ cmd: 'get_truck_by_id' }, { truckId });
+  @Get(':truck_id')
+  getTruckById(@Param('truck_id') truck_id: number): Observable<any> {
+    return this.shipmentsService.send({ cmd: 'get_truck_by_id' }, { truck_id });
   }
 
   // Créer un nouveau camion
@@ -40,7 +43,7 @@ export class TrucksController {
   createTruck(
     @Body()
     body: {
-      companyId: number;
+      company_id: number;
       license_plate: string;
       capacity: number;
       model: string;
@@ -50,71 +53,71 @@ export class TrucksController {
   }
 
   // Mettre à jour un camion existant
-  @Put(':truckId')
+  @Put(':truck_id')
   updateTruck(
-    @Param('truckId') truckId: number,
+    @Param('truck_id') truck_id: number,
     @Body() body: { license_plate?: string; capacity?: number; model?: string },
   ): Observable<any> {
-    console.log('Sending to service:', { truckId, updates: body });
+    console.log('Sending to service:', { truck_id, updates: body });
 
     return this.shipmentsService.send(
       { cmd: 'update_truck' },
-      { truckId, updates: body },
+      { truck_id, updates: body },
     );
   }
 
   // Supprimer un camion (soft delete)
-  @Delete(':truckId')
-  deleteTruck(@Param('truckId') truckId: number): Observable<any> {
-    return this.shipmentsService.send({ cmd: 'delete_truck' }, { truckId });
+  @Delete(':truck_id')
+  deleteTruck(@Param('truck_id') truck_id: number): Observable<any> {
+    return this.shipmentsService.send({ cmd: 'delete_truck' }, { truck_id });
   }
 
   // Maintenance des camions
-  @Get(':truckId/maintenances')
-  getTruckMaintenances(@Param('truckId') truckId: number): Observable<any> {
+  @Get(':truck_id/maintenances')
+  getTruckMaintenances(@Param('truck_id') truck_id: number): Observable<any> {
     return this.shipmentsService.send(
       { cmd: 'get_truck_maintenances' },
-      { truckId },
+      { truck_id },
     );
   }
 
-  @Post(':truckId/maintenances')
+  @Post(':truck_id/maintenances')
   addTruckMaintenance(
-    @Param('truckId') truckId: number,
+    @Param('truck_id') truck_id: number,
     @Body()
     body: { description: string; cost: number; maintenanceDate?: string },
   ): Observable<any> {
     return this.shipmentsService.send(
       { cmd: 'add_truck_maintenance' },
-      { truckId, ...body },
+      { truck_id, ...body },
     );
   }
 
-  @Put(':truckId/maintenances/:maintenanceId')
+  @Put(':truck_id/maintenances/:maintenance_id')
   updateTruckMaintenance(
-    @Param('truckId') truckId: number,
-    @Param('maintenanceId') maintenanceId: number,
+    @Param('truck_id') truck_id: number,
+    @Param('maintenance_id') maintenance_id: number,
     @Body()
     body: { description?: string; cost?: number; maintenanceDate?: string },
   ): Observable<any> {
     return this.shipmentsService.send(
       { cmd: 'update_truck_maintenance' },
       {
-        truckId,
-        maintenanceId,
-        updates: { ...body }, // Crée un objet `updates` compatible avec le microservice
+        truck_id,
+        maintenance_id,
+        updates: { ...body },
       },
     );
   }
 
-  @Delete(':truckId/maintenances/:maintenanceId')
+  @Delete(':truck_id/maintenances/:maintenance_id')
   deleteTruckMaintenance(
-    @Param('truckId') truckId: number,
-    @Param('maintenanceId') maintenanceId: number,
+    @Param('truck_id') truck_id: number,
+    @Param('maintenance_id') maintenance_id: number,
   ): Observable<any> {
     return this.shipmentsService.send(
       { cmd: 'delete_truck_maintenance' },
-      { truckId, maintenanceId },
+      { truck_id, maintenance_id },
     );
   }
 }

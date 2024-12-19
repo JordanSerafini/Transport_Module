@@ -2,9 +2,8 @@ import React, { useContext } from "react";
 import GlobalContext from "../../../context/GlobalContext";
 
 import NavMenu from "../../components/Menu/NavMenu";
-import ChantierMain from "../Chantier/ChantierMain";
-import DevisMain from "../Devis/DevisMain";
 import TransportPage from "../Transport/TransportPage";
+import Dashboard from "../Dashboard/Dashboard";
 
 const Home: React.FC = () => {
   const globalContext = useContext(GlobalContext);
@@ -41,8 +40,7 @@ const Home: React.FC = () => {
           </button>
         </div>
       )}
-      {content === "Chantiers" && <ChantierMain />}
-      {content === "Devis" && <DevisMain />}
+      {content === "Dashboard" && <Dashboard />}
       {content === "Transport" && <TransportPage/>}
     </div>
   );

@@ -17,22 +17,22 @@ export class TrucksService {
   }
 
   // Récupérer un camion par son ID
-  async getTruckById(truckId: number) {
+  async getTruckById(truck_id: number) {
     const query = `
       SELECT * 
       FROM trucks 
       WHERE id = $1 AND deleted_at IS NULL
     `;
-    const { rows } = await this.pool.query(query, [truckId]);
+    const { rows } = await this.pool.query(query, [truck_id]);
     if (rows.length === 0) {
-      throw new NotFoundException(`Truck with ID ${truckId} not found`);
+      throw new NotFoundException(`Truck with ID ${truck_id} not found`);
     }
     return rows[0];
   }
 
   // Créer un nouveau camion
   async createTruck(data: {
-    companyId: number;
+    company_id: number;
     license_plate: string;
     capacity: number;
     model: string;
@@ -43,7 +43,7 @@ export class TrucksService {
       RETURNING *
     `;
     const { rows } = await this.pool.query(query, [
-      data.companyId,
+      data.company_id,
       data.license_plate,
       data.capacity,
       data.model,
@@ -53,7 +53,7 @@ export class TrucksService {
 
   // Mettre à jour un camion
   async updateTruck(
-    truckId: number,
+    truck_id: number,
     updates: { license_plate?: string; capacity?: number; model?: string },
   ) {
     const query = `
@@ -70,44 +70,44 @@ export class TrucksService {
       updates.license_plate,
       updates.capacity,
       updates.model,
-      truckId,
+      truck_id,
     ]);
     if (rows.length === 0) {
-      throw new NotFoundException(`Truck with ID ${truckId} not found`);
+      throw new NotFoundException(`Truck with ID ${truck_id} not found`);
     }
     return rows[0];
   }
 
   // Supprimer un camion (soft delete)
-  async deleteTruck(truckId: number) {
+  async deleteTruck(truck_id: number) {
     const query = `
       UPDATE trucks 
       SET deleted_at = NOW() 
       WHERE id = $1
       RETURNING *
     `;
-    const { rows } = await this.pool.query(query, [truckId]);
+    const { rows } = await this.pool.query(query, [truck_id]);
     if (rows.length === 0) {
-      throw new NotFoundException(`Truck with ID ${truckId} not found`);
+      throw new NotFoundException(`Truck with ID ${truck_id} not found`);
     }
-    return { message: `Truck ${truckId} soft-deleted.` };
+    return { message: `Truck ${truck_id} soft-deleted.` };
   }
 
   // Récupérer les maintenances pour un camion
-  async getTruckMaintenances(truckId: number) {
+  async getTruckMaintenances(truck_id: number) {
     const query = `
       SELECT * 
       FROM truck_maintenances 
       WHERE truck_id = $1 AND deleted_at IS NULL
     `;
-    const { rows } = await this.pool.query(query, [truckId]);
+    const { rows } = await this.pool.query(query, [truck_id]);
     return rows;
   }
 
   // Ajouter une maintenance à un camion
   async addTruckMaintenance(
-    truckId: number,
-    data: { description: string; cost: number; maintenanceDate?: string },
+    truck_id: number,
+    data: { description: string; cost: number; maintenance_date?: string },
   ) {
     const query = `
       INSERT INTO truck_maintenances (truck_id, description, cost, maintenance_date, created_at) 
@@ -115,19 +115,19 @@ export class TrucksService {
       RETURNING *
     `;
     const { rows } = await this.pool.query(query, [
-      truckId,
+      truck_id,
       data.description,
       data.cost,
-      data.maintenanceDate || new Date(),
+      data.maintenance_date || new Date(),
     ]);
     return rows[0];
   }
 
   // Mettre à jour une maintenance
   async updateTruckMaintenance(
-    truckId: number,
+    truck_id: number,
     maintenanceId: number,
-    updates: { description?: string; cost?: number; maintenanceDate?: string },
+    updates: { description?: string; cost?: number; maintenance_date?: string },
   ) {
     const query = `
       UPDATE truck_maintenances 
@@ -142,34 +142,34 @@ export class TrucksService {
     const { rows } = await this.pool.query(query, [
       updates.description,
       updates.cost,
-      updates.maintenanceDate,
+      updates.maintenance_date,
       maintenanceId,
-      truckId,
+      truck_id,
     ]);
     if (rows.length === 0) {
       throw new NotFoundException(
-        `Maintenance with ID ${maintenanceId} not found for truck ${truckId}`,
+        `Maintenance with ID ${maintenanceId} not found for truck ${truck_id}`,
       );
     }
     return rows[0];
   }
 
   // Supprimer une maintenance (soft delete)
-  async deleteTruckMaintenance(truckId: number, maintenanceId: number) {
+  async deleteTruckMaintenance(truck_id: number, maintenanceId: number) {
     const query = `
       UPDATE truck_maintenances 
       SET deleted_at = NOW() 
       WHERE id = $1 AND truck_id = $2
       RETURNING *
     `;
-    const { rows } = await this.pool.query(query, [maintenanceId, truckId]);
+    const { rows } = await this.pool.query(query, [maintenanceId, truck_id]);
     if (rows.length === 0) {
       throw new NotFoundException(
-        `Maintenance with ID ${maintenanceId} not found for truck ${truckId}`,
+        `Maintenance with ID ${maintenanceId} not found for truck ${truck_id}`,
       );
     }
     return {
-      message: `Maintenance ${maintenanceId} soft-deleted for truck ${truckId}.`,
+      message: `Maintenance ${maintenanceId} soft-deleted for truck ${truck_id}.`,
     };
   }
 }

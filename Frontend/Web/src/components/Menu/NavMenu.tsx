@@ -2,7 +2,8 @@ import GlobalContext from "../../../context/GlobalContext";
 import { useContext, useState } from "react";
 
 // Importation des icônes
-import { FaHome, FaCog, FaClipboardList } from "react-icons/fa";
+import { FaHome, FaCog } from "react-icons/fa";
+import { MdDashboard } from "react-icons/md";
 
 function NavMenu() {
   const context = useContext(GlobalContext);
@@ -17,9 +18,8 @@ function NavMenu() {
   // Liste des items du menu
   const menuItems = [
     { label: "Home", icon: <FaHome />, value: "Home" },
+    { label: "Dashboard", icon: <MdDashboard />, value: "Dashboard" },
     { label: "Transport", icon: <FaCog />, value: "Transport" },
-    { label: "Chantiers", icon: <FaCog />, value: "Chantiers" },
-    { label: "Devis", icon: <FaClipboardList />, value: "Devis" },
   ];
 
   return (
