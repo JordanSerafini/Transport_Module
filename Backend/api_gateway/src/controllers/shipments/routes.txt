@@ -1,0 +1,12 @@
+Routes proposées
+
+/routes
+    GET /routes : Récupérer toutes les routes avec pagination.
+    GET /routes/:routeId : Récupérer une route spécifique.
+    POST /routes : Créer une nouvelle route.
+    PUT /routes/:routeId : Mettre à jour une route existante.
+    DELETE /routes/:routeId : Supprimer une route (soft delete).
+    GET /routes/:routeId/stops : Récupérer toutes les étapes (stops) d'une route.
+    POST /routes/:routeId/stops : Ajouter une étape (stop) à une route.
+    PUT /routes/:routeId/stops/:stopId : Mettre à jour une étape spécifique d'une route.
+    DELETE /routes/:routeId/stops/:stopId : Supprimer une étape d'une route.

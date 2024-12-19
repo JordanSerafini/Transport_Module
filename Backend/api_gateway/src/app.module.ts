@@ -6,6 +6,7 @@ import { AuthController } from './controllers/auth/auth.controller';
 import { TrucksController } from './controllers/shipments/trucks.controller';
 import { DriversController } from './controllers/shipments/drivers.controller';
 import { ShipmentsController } from './controllers/shipments/shipments.controller';
+import { RoutesController } from './controllers/shipments/routes.controller';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ShipmentsController } from './controllers/shipments/shipments.controlle
     TrucksController,
     DriversController,
     ShipmentsController,
+    RoutesController,
   ],
 })
 export class AppModule {}
