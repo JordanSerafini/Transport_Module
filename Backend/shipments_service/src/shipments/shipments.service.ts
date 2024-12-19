@@ -36,14 +36,14 @@ export class ShipmentsService {
     }
   }
 
-  async getShipmentById(shipmentId: number) {
+  async getShipmentById(shipment_id: number) {
     const query = `
       SELECT *
       FROM shipments
       WHERE id = $1 AND deleted_at IS NULL
     `;
     try {
-      const result = await this.pool.query(query, [shipmentId]);
+      const result = await this.pool.query(query, [shipment_id]);
       if (result.rows.length === 0) {
         throw new BadRequestException('Shipment not found.');
       }
@@ -82,7 +82,7 @@ export class ShipmentsService {
   }
 
   async updateShipment(
-    shipmentId: number,
+    shipment_id: number,
     updates: Partial<{
       order_id: number;
       truck_id: number;
@@ -95,13 +95,13 @@ export class ShipmentsService {
       throw new BadRequestException('No fields provided to update.');
     }
 
-    // Filtrer les clés valides (exclure `shipmentId` ou autres champs invalides)
+    // Filtrer les clés valides (exclure `shipment_id` ou autres champs invalides)
     const filteredUpdates = Object.fromEntries(
-      Object.entries(updates).filter(([key]) => key !== 'shipmentId'),
+      Object.entries(updates).filter(([key]) => key !== 'shipment_id'),
     );
 
     const fields = Object.keys(filteredUpdates)
-      .map((key, index) => `${key} = $${index + 2}`) // À partir de $2 car $1 est pour shipmentId
+      .map((key, index) => `${key} = $${index + 2}`) // À partir de $2 car $1 est pour shipment_id
       .join(', ');
 
     const query = `
@@ -110,7 +110,7 @@ export class ShipmentsService {
       WHERE id = $1 AND deleted_at IS NULL
       RETURNING *
     `;
-    const values = [shipmentId, ...Object.values(filteredUpdates)];
+    const values = [shipment_id, ...Object.values(filteredUpdates)];
 
     console.log('SQL Query:', query); // Déboguer la requête SQL
     console.log('SQL Values:', values); // Déboguer les valeurs
@@ -127,7 +127,7 @@ export class ShipmentsService {
     }
   }
 
-  async deleteShipment(shipmentId: number) {
+  async deleteShipment(shipment_id: number) {
     const query = `
       UPDATE shipments
       SET deleted_at = NOW()
@@ -135,7 +135,7 @@ export class ShipmentsService {
       RETURNING *
     `;
     try {
-      const result = await this.pool.query(query, [shipmentId]);
+      const result = await this.pool.query(query, [shipment_id]);
       if (result.rows.length === 0) {
         throw new BadRequestException('Shipment not found or already deleted.');
       }
@@ -145,7 +145,7 @@ export class ShipmentsService {
     }
   }
 
-  async getShipmentEvents(shipmentId: number) {
+  async getShipmentEvents(shipment_id: number) {
     const query = `
       SELECT *
       FROM shipment_events
@@ -153,7 +153,7 @@ export class ShipmentsService {
       ORDER BY event_time ASC
     `;
     try {
-      const result = await this.pool.query(query, [shipmentId]);
+      const result = await this.pool.query(query, [shipment_id]);
       return result.rows;
     } catch (error) {
       throw new BadRequestException('Failed to fetch shipment events.', error);
@@ -161,7 +161,7 @@ export class ShipmentsService {
   }
 
   async addShipmentEvent(
-    shipmentId: number,
+    shipment_id: number,
     data: { event_status_id: number; comment?: string; event_time?: string },
   ) {
     const query = `
@@ -170,7 +170,7 @@ export class ShipmentsService {
       RETURNING *
     `;
     const values = [
-      shipmentId,
+      shipment_id,
       data.event_status_id,
       data.comment || null,
       data.event_time || new Date(),
@@ -181,6 +181,74 @@ export class ShipmentsService {
       return result.rows[0];
     } catch (error) {
       throw new BadRequestException('Failed to add shipment event.', error);
+    }
+  }
+
+  async deleteShipmentEvent(shipment_id: number, event_id: number) {
+    const query = `
+      UPDATE shipment_events
+      SET deleted_at = NOW()
+      WHERE shipment_id = $1 AND id = $2
+      RETURNING *
+    `;
+    try {
+      const result = await this.pool.query(query, [shipment_id, event_id]);
+      if (result.rows.length === 0) {
+        throw new BadRequestException(
+          'Shipment event not found or already deleted.',
+        );
+      }
+      return { message: 'Shipment event deleted successfully.' };
+    } catch (error) {
+      throw new BadRequestException('Failed to delete shipment event.', error);
+    }
+  }
+
+  async updateShipmentEvent(data: {
+    shipment_id: number;
+    event_id: number;
+    event_status_id?: number;
+    comment?: string;
+    event_time?: string;
+  }) {
+    const { shipment_id, event_id, ...updates } = data;
+
+    // Vérifier qu'il y a au moins un champ à mettre à jour
+    if (Object.keys(updates).length === 0) {
+      throw new BadRequestException('No fields to update.');
+    }
+
+    // Générer les champs à mettre à jour dans la requête SQL
+    const fields = Object.keys(updates)
+      .map((key, index) => `${key} = $${index + 3}`)
+      .join(', ');
+
+    const query = `
+      UPDATE shipment_events
+      SET ${fields}, updated_at = NOW()
+      WHERE id = $2 AND shipment_id = $1 AND deleted_at IS NULL
+      RETURNING *
+    `;
+
+    const values = [shipment_id, event_id, ...Object.values(updates)];
+
+    console.log('SQL Query:', query);
+    console.log('SQL Values:', values);
+
+    try {
+      const result = await this.pool.query(query, values);
+
+      // Si aucun événement n'a été mis à jour, lever une exception
+      if (result.rows.length === 0) {
+        throw new NotFoundException(
+          'Shipment event not found or already deleted.',
+        );
+      }
+
+      return result.rows[0]; // Retourner l'événement mis à jour
+    } catch (error) {
+      console.error('SQL Error:', error.message);
+      throw new BadRequestException('Failed to update shipment event.', error);
     }
   }
 }

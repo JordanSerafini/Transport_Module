@@ -25,8 +25,8 @@ export class ShipmentsController {
   }
 
   @MessagePattern({ cmd: 'get_shipment_by_id' })
-  getShipmentById(@Payload() data: { shipmentId: number }) {
-    return this.shipmentsService.getShipmentById(data.shipmentId);
+  getShipmentById(@Payload() data: { shipment_id: number }) {
+    return this.shipmentsService.getShipmentById(data.shipment_id);
   }
 
   @MessagePattern({ cmd: 'create_shipment' })
@@ -47,36 +47,60 @@ export class ShipmentsController {
   updateShipment(
     @Payload()
     data: {
-      shipmentId: number;
+      shipment_id: number;
       truck_id?: number;
       driver_id?: number;
       route_id?: number;
       status_id?: number;
     },
   ) {
-    return this.shipmentsService.updateShipment(data.shipmentId, data);
+    return this.shipmentsService.updateShipment(data.shipment_id, data);
   }
 
   @MessagePattern({ cmd: 'delete_shipment' })
-  deleteShipment(@Payload() data: { shipmentId: number }) {
-    return this.shipmentsService.deleteShipment(data.shipmentId);
+  deleteShipment(@Payload() data: { shipment_id: number }) {
+    return this.shipmentsService.deleteShipment(data.shipment_id);
   }
 
   @MessagePattern({ cmd: 'get_shipment_events' })
-  getShipmentEvents(@Payload() data: { shipmentId: number }) {
-    return this.shipmentsService.getShipmentEvents(data.shipmentId);
+  getShipmentEvents(@Payload() data: { shipment_id: number }) {
+    return this.shipmentsService.getShipmentEvents(data.shipment_id);
   }
 
   @MessagePattern({ cmd: 'add_shipment_event' })
   addShipmentEvent(
     @Payload()
     data: {
-      shipmentId: number;
+      shipment_id: number;
       event_status_id: number;
       comment?: string;
       event_time?: string;
     },
   ) {
-    return this.shipmentsService.addShipmentEvent(data.shipmentId, data);
+    return this.shipmentsService.addShipmentEvent(data.shipment_id, data);
+  }
+
+  @MessagePattern({ cmd: 'delete_shipment_event' })
+  deleteShipmentEvent(
+    @Payload() data: { shipment_id: number; event_id: number },
+  ) {
+    return this.shipmentsService.deleteShipmentEvent(
+      data.shipment_id,
+      data.event_id,
+    );
+  }
+
+  @MessagePattern({ cmd: 'update_shipment_event' })
+  updateShipmentEvent(
+    @Payload()
+    data: {
+      shipment_id: number;
+      event_id: number;
+      event_status_id?: number;
+      comment?: string;
+      event_time?: string;
+    },
+  ) {
+    return this.shipmentsService.updateShipmentEvent(data);
   }
 }

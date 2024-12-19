@@ -38,11 +38,11 @@ export class ShipmentsController {
   }
 
   // Obtenir une expédition spécifique par ID
-  @Get(':shipmentId')
-  async getShipmentById(@Param('shipmentId') shipmentId: number) {
+  @Get(':shipment_id')
+  async getShipmentById(@Param('shipment_id') shipment_id: number) {
     return this.shipmentsServiceClient.send(
       { cmd: 'get_shipment_by_id' },
-      { shipmentId },
+      { shipment_id },
     );
   }
 
@@ -62,9 +62,9 @@ export class ShipmentsController {
   }
 
   // Mettre à jour une expédition
-  @Put(':shipmentId')
+  @Put(':shipment_id')
   async updateShipment(
-    @Param('shipmentId') shipmentId: number,
+    @Param('shipment_id') shipment_id: number,
     @Body()
     body: {
       truck_id?: number;
@@ -73,35 +73,35 @@ export class ShipmentsController {
       status_id?: number;
     },
   ) {
-    console.log('Payload:', { shipmentId, ...body });
+    console.log('Payload:', { shipment_id, ...body });
     return this.shipmentsServiceClient.send(
       { cmd: 'update_shipment' },
-      { shipmentId, ...body },
+      { shipment_id, ...body },
     );
   }
 
   // Supprimer une expédition (soft delete)
-  @Delete(':shipmentId')
-  async deleteShipment(@Param('shipmentId') shipmentId: number) {
+  @Delete(':shipment_id')
+  async deleteShipment(@Param('shipment_id') shipment_id: number) {
     return this.shipmentsServiceClient.send(
       { cmd: 'delete_shipment' },
-      { shipmentId },
+      { shipment_id },
     );
   }
 
   // Obtenir tous les événements d'une expédition
-  @Get(':shipmentId/events')
-  async getShipmentEvents(@Param('shipmentId') shipmentId: number) {
+  @Get(':shipment_id/events')
+  async getShipmentEvents(@Param('shipment_id') shipment_id: number) {
     return this.shipmentsServiceClient.send(
       { cmd: 'get_shipment_events' },
-      { shipmentId },
+      { shipment_id },
     );
   }
 
   // Ajouter un événement à une expédition
-  @Post(':shipmentId/events')
+  @Post(':shipment_id/events')
   async addShipmentEvent(
-    @Param('shipmentId') shipmentId: number,
+    @Param('shipment_id') shipment_id: number,
     @Body()
     body: {
       event_status_id: number;
@@ -111,7 +111,35 @@ export class ShipmentsController {
   ) {
     return this.shipmentsServiceClient.send(
       { cmd: 'add_shipment_event' },
-      { shipmentId, ...body },
+      { shipment_id, ...body },
+    );
+  }
+
+  @Delete(':shipment_id/events/:event_id')
+  async deleteShipmentEvent(
+    @Param('shipment_id') shipment_id: number,
+    @Param('event_id') event_id: number,
+  ) {
+    return this.shipmentsServiceClient.send(
+      { cmd: 'delete_shipment_event' },
+      { shipment_id, event_id },
+    );
+  }
+
+  @Put(':shipment_id/events/:event_id')
+  async updateShipmentEvent(
+    @Param('shipment_id') shipment_id: number,
+    @Param('event_id') event_id: number,
+    @Body()
+    body: {
+      event_status_id?: number;
+      comment?: string;
+      event_time?: string;
+    },
+  ) {
+    return this.shipmentsServiceClient.send(
+      { cmd: 'update_shipment_event' },
+      { shipment_id, event_id, ...body },
     );
   }
 }
