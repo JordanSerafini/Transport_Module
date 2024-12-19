@@ -1,0 +1,100 @@
+Services Potentiels
+1. Service « Auth / Users / Access Management »
+
+    Responsabilités :
+        Gestion de l'authentification (JWT, OAuth2, etc.).
+        Gestion des utilisateurs internes (admin, manager, user), de leurs rôles et permissions.
+        Gestion des mots de passe, des tokens, renouvellement de session, etc.
+    Tables Concernées :
+        users (pour la gestion des utilisateurs internes)
+        Une potentielle intégration avec companies si la logique l'exige (car company_id est dans users).
+    Exposition :
+        Endpoints pour login, register, refresh token, gestion du profil, etc.
+
+2. Service « Companies / Tenants / Annuaire »
+
+    Responsabilités :
+        Gestion des entreprises (tenants), de leurs informations.
+        Gestion des adresses attachées aux entreprises.
+    Tables Concernées :
+        companies
+        addresses
+    Exposition :
+        CRUD des companies, mise à jour de l'adresse, etc.
+
+3. Service « Produits / Inventaire »
+
+    Responsabilités :
+        Gestion des produits, unités de mesure, descriptions, poids, etc.
+        Gestion de l'inventaire : entrepôts, stocks éventuellement (même si ici le stock n'est pas explicitement mentionné, on pourrait étendre).
+    Tables Concernées :
+        products
+        units
+        warehouses
+    Exposition :
+        CRUD des produits, associations des produits avec unités, gestion de l’inventaire des entrepôts.
+
+4. Service « Clients »
+
+    Responsabilités :
+        Gestion des clients (externes) : informations, adresses, contacts.
+    Tables Concernées :
+        customers
+        addresses (déjà gérées par companies, il faut voir si on sépare la logique ou on centralise la gestion des adresses dans un service partagé)
+    On pourrait centraliser addresses dans un service commun « Annuaire/Adresses » ou le laisser dupliqué si on le souhaite, mais c’est souvent mieux centralisé.
+
+5. Service « Commandes »
+
+    Responsabilités :
+        Gestion des commandes (orders), des lignes de commande (order_items).
+        Gestion des statuts de commande (order_statuses).
+    Tables Concernées :
+        orders
+        order_items
+        order_statuses
+    Exposition :
+        Création de commande, mise à jour du statut, ajout de produits à la commande, etc.
+
+6. Service « Expéditions / Logistique »
+
+    Responsabilités :
+        Gestion des expéditions (shipments), événements de suivi (shipment_events).
+        Gestion des routes, arrêts de route (routes, route_stops).
+        Gestion des camions (trucks) et des chauffeurs (drivers).
+        Gestion des statuts d'expédition (shipment_statuses).
+    Tables Concernées :
+        shipments, shipment_events, shipment_statuses
+        routes, route_stops
+        trucks, drivers
+    Exposition :
+        Création, mise à jour et suivi des expéditions, affectation d’un chauffeur, d’un camion, etc.
+        Gestion des itinéraires, des arrêts, reporting sur la progression.
+
+7. Service « Facturation / Paiements »
+
+    Responsabilités :
+        Gestion des factures (invoices), statuts de facture.
+        Gestion des paiements (payments) attachés aux factures.
+    Tables Concernées :
+        invoices
+        payments
+    Exposition :
+        Création de facture après commande, traitement des paiements, mise à jour du statut de la facture, etc.
+
+8. Service « KPI / Reporting »
+
+    Responsabilités :
+        Gestion des KPI snapshots (analyses périodiques, statistiques).
+    Tables Concernées :
+        kpi_snapshots
+    Exposition :
+        Endpoints pour récupérer les KPI, filtres par période, génération de rapports, etc.
+
+9. Service « Notifications »
+
+    Responsabilités :
+        Gestion des notifications internes (ex : facture en retard, stock faible, maintenance camion...).
+    Tables Concernées :
+        notifications
+    Exposition :
+        Endpoints pour gérer (mark as read), lister, envoyer des notifications internes.
