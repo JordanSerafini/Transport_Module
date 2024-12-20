@@ -7,6 +7,7 @@ import {
   Query,
   Param,
   Body,
+  BadRequestException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
@@ -37,12 +38,32 @@ export class DriversController {
   }
 
   // Récupérer un chauffeur spécifique par ID
-  @Get(':driverId')
-  async getDriverById(@Param('driverId') driverId: number) {
+  @Get(':driver_id')
+  async getDriverById(@Param('driver_id') driver_id: number) {
     return this.driversServiceClient.send(
       { cmd: 'get_driver_by_id' },
-      { driverId },
+      { driver_id },
     );
+  }
+  @Get('/status/:driver_status')
+  async getDriversByStatus(
+    @Param('driver_status') driver_status: string,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
+  ) {
+    try {
+      const drivers = await this.driversServiceClient
+        .send({ cmd: 'get_drivers_by_status' }, { driver_status, page, limit })
+        .toPromise();
+
+      return drivers;
+    } catch (error) {
+      console.error('Erreur dans getDriversByStatus:', error);
+      throw new BadRequestException(
+        'Impossible de récupérer les chauffeurs.',
+        error.message,
+      );
+    }
   }
 
   // Créer un chauffeur

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import {  useEffect, useState } from "react";
+import ShipmentCard from "./ShipmentCard";
 
 import { ShipmentsService } from "../../../utils/functions/shipments_service/shipments.function";
 import { driversService } from "../../../utils/functions/shipments_service/drivers.function";
@@ -19,8 +20,7 @@ function ShipmentsPage() {
   const [routes, setRoutes] = useState<Route[]>([]);
   const [trucks, setTrucks] = useState<Truck[]>([]);
 
-
-  const [limit] = useState<number>(50);
+  const [limit] = useState<number>(10);
   const [page] = useState<number>(1);
 
   const getShipments = async () => {
@@ -39,7 +39,7 @@ function ShipmentsPage() {
     } catch (err) {
       console.error("Erreur lors de la récupération des chauffeurs :", err);
     }
-  }
+  };
 
   const getOrders = async () => {
     try {
@@ -48,7 +48,7 @@ function ShipmentsPage() {
     } catch (err) {
       console.error("Erreur lors de la récupération des commandes :", err);
     }
-  }
+  };
 
   const getRoutes = async () => {
     try {
@@ -57,7 +57,7 @@ function ShipmentsPage() {
     } catch (err) {
       console.error("Erreur lors de la récupération des itinéraires :", err);
     }
-  }
+  };
 
   const getTrucks = async () => {
     try {
@@ -66,7 +66,8 @@ function ShipmentsPage() {
     } catch (err) {
       console.error("Erreur lors de la récupération des camions :", err);
     }
-  }
+  };
+
 
   useEffect(() => {
     getShipments();
@@ -76,23 +77,39 @@ function ShipmentsPage() {
     getTrucks();
   }, []);
 
-console.log(trucks);
+
+
+  const enrichedShipments = shipments.map((shipment) => ({
+    ...shipment,
+    id: shipment.id,
+    driver: drivers.find((driver) => driver.id === shipment.driver_id) || { name: "Non assigné", id: -1, company_id: -1, driver_status: "", created_at: "" },
+    order: orders.find((order) => order.id === shipment.order_id) || { description: "Non spécifiée", id: -1, company_id: -1, created_at: "" },
+    route: routes.find((route) => route.id === shipment.route_id) || { name: "Non spécifié", id: -1, company_id: -1, created_at: "" },
+    truck: trucks.find((truck) => truck.id === shipment.truck_id) || { model: "Non spécifié", id: -1, company_id: -1, license_plate: "", created_at: "" },
+  }));
 
   return (
-    <div>
+    <div className="w-screen h-screen flex flex-col justify-start items-start gap-4 p-4">
       {shipments.length === 0 ? (
         <p>Aucune expédition trouvée.</p>
       ) : (
-        <ul>
-          {shipments.map((shipment) => (
-            <li key={shipment.id}>
-              EXP000{shipment.id} 
-            </li>
+        <div className="overflow-auto flex flex-wrap justify-start items-start gap-4">
+          {enrichedShipments.map((shipment) => (
+            <ShipmentCard
+              key={shipment.id}
+              id={shipment.id}
+              driver={shipment.driver}
+              order={shipment.order}
+              route={shipment.route}
+              truck={shipment.truck}
+              createdAt={shipment.created_at}
+            />
           ))}
-        </ul>
+        </div>
       )}
     </div>
   );
 }
 
 export default ShipmentsPage;
+

@@ -38,6 +38,36 @@ export class DriversService {
     }
   }
 
+  async getDriversByStatus(
+    driver_status: string,
+    page: number = 1,
+    limit: number = 10,
+  ) {
+    const offset = (page - 1) * limit;
+    const query = `
+      SELECT *
+      FROM drivers
+      WHERE driver_status = $1 AND deleted_at IS NULL
+      ORDER BY created_at DESC
+      LIMIT $2 OFFSET $3
+    `;
+
+    try {
+      const result = await this.pool.query(query, [
+        driver_status,
+        limit,
+        offset,
+      ]);
+      return result.rows;
+    } catch (error) {
+      console.error('Erreur dans getDriversByStatus:', error.message);
+      throw new BadRequestException(
+        'Impossible de récupérer les chauffeurs.',
+        error,
+      );
+    }
+  }
+
   async getDriverById(driverId: number) {
     const query = `
       SELECT *

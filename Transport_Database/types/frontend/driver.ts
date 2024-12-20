@@ -3,11 +3,11 @@ export interface Driver {
     company_id: number;
     name: string;
     license_number?: string;
-    license_expiry_date?: string; // ISO date string
+    license_expiry_date?: string;
     phone?: string;
     driver_status: string;
-    created_at: string; // ISO date string
-    updated_at?: string; // ISO date string
-    deleted_at?: string; // ISO date string
+    created_at: string;
+    updated_at?: string;
+    deleted_at?: string;
   }
   

@@ -25,8 +25,22 @@ export class DriversController {
   }
 
   @MessagePattern({ cmd: 'get_driver_by_id' })
-  getDriverById(@Payload() data: { driverId: number }) {
-    return this.driversService.getDriverById(data.driverId);
+  getDriverById(@Payload() data: { driver_id: number }) {
+    return this.driversService.getDriverById(data.driver_id);
+  }
+
+  @MessagePattern({ cmd: 'get_drivers_by_status' })
+  async getDriversByStatus(
+    @Payload() data: { driver_status: string; page?: number; limit?: number },
+  ) {
+    const { driver_status, page = 1, limit = 10 } = data;
+
+    const results = await this.driversService.getDriversByStatus(
+      driver_status,
+      page,
+      limit,
+    );
+    return results;
   }
 
   @MessagePattern({ cmd: 'create_driver' })

@@ -47,10 +47,10 @@ const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =
       <ToastContainer />
       {/* Modale Générique */}
       {isModalOpen && modalData && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-white rounded-lg p-4 shadow-lg max-w-md w-full">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 "onClick={closeModal}>
+          <div className="bg-white p-4 shadow-2xl max-w-md w-full rounded-xl ">
             {/* Titre */}
-            {modalData.title && <h2 className="text-lg font-bold mb-2">{modalData.title}</h2>}
+            {modalData.title && <h2 className="p-2 text-lg font-bold text-center tracking-widest border-b ">{modalData.title}</h2>}
 
             {/* Contenu */}
             <div className="mb-4">{modalData.content}</div>

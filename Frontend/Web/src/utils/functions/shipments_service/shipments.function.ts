@@ -1,4 +1,4 @@
-import { Shipment, ShipmentEvent } from "../../../../../../Transport_Database/types/frontend/shipment";
+import { Shipment, ShipmentEvent, ShipmentStatus } from "../../../../../../Transport_Database/types/frontend/shipment";
 import url from "../../url";
 import Cookies from "js-cookie";
 
@@ -264,7 +264,7 @@ export const ShipmentsService = {
     }
   },
 
-  getStatus: async (shipment_id: number): Promise<{ status: string }> => {
+  getStatus: async (shipment_id: number): Promise<ShipmentStatus> => {
     try {
       const response = await fetch(`${url.current}/shipments/${shipment_id}/status`, {
         method: "GET",

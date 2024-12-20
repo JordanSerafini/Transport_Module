@@ -274,7 +274,20 @@ INSERT INTO drivers (company_id, name, license_number, license_expiry_date, phon
   (1, 'Émilie Lefèvre', 'DRV-383940', '2024-10-10', '+33-6-29-90-12-35', 'ACTIVE', NOW(), NOW(), NULL),
   (1, 'Maxime Roux', 'DRV-394041', '2027-11-11', '+33-6-30-01-23-46', 'ACTIVE', NOW(), NOW(), NULL),
   (1, 'Clara Dubois', 'DRV-404142', '2025-12-12', '+33-6-31-12-34-57', 'ACTIVE', NOW(), NOW(), NULL),
-  (1, 'Julien Garcia', 'DRV-414243', '2026-01-01', '+33-6-32-23-45-68', 'ACTIVE', NOW(), NOW(), NULL);
+  (1, 'Julien Garcia', 'DRV-414243', '2026-01-01', '+33-6-32-23-45-68', 'ACTIVE', NOW(), NOW(), NULL),
+
+  (1, 'Emma Laurent', 'DRV-423334', '2025-04-04', '+33-6-23-34-56-79', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Lucas Garcia', 'DRV-533435', '2026-05-05', '+33-6-24-45-67-80', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Chloé Bernard', 'DRV-643536', '2024-06-06', '+33-6-25-56-78-91', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Victor Petit', 'DRV-753637', '2027-07-07', '+33-6-26-67-89-02', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Sophie Moreau', 'DRV-863738', '2025-08-08', '+33-6-27-78-90-13', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Nathan Blanc', 'DRV-973839', '2026-09-09', '+33-6-28-89-01-24', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Émilie Lefèvre', 'DRV-103940', '2024-10-10', '+33-6-29-90-12-35', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Maxime Roux', 'DRV-114041', '2027-11-11', '+33-6-30-01-23-46', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Clara Dubois', 'DRV-994142', '2025-12-12', '+33-6-31-12-34-57', 'AVAILABLE', NOW(), NOW(), NULL),
+  (1, 'Julien Garcia', 'DRV-884243', '2026-01-01', '+33-6-32-23-45-68', 'AVAILABLE', NOW(), NOW(), NULL);
+
+  
 
 -- ==================================================
 --                     Produits

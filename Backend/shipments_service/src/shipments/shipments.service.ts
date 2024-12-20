@@ -315,9 +315,9 @@ export class ShipmentsService {
   async getShipmentStatus(shipment_id: number) {
     const query = `
       SELECT 
-        ss.id AS status_id,
-        ss.code AS status_code,
-        ss.label AS status_label,
+        ss.id AS id,
+        ss.code AS code,
+        ss.label AS label,
         ss.is_final AS is_final
       FROM shipments s
       JOIN shipment_statuses ss ON s.status_id = ss.id
