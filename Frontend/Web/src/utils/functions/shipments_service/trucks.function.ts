@@ -1,4 +1,4 @@
-import { Truck } from "../../../@types/truck";
+import { Truck } from "../../../../../../Transport_Database/types/frontend/truck";
 import url from "../../url";
 import Cookies from "js-cookie";
 
@@ -8,7 +8,7 @@ export const trucksService = {
   // Obtenir tous les camions pour une entreprise
   getAll: async (): Promise<Truck[]> => {
     try {
-      const response = await fetch(`${url}/trucks`, {
+      const response = await fetch(`${url.current}/trucks`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -18,7 +18,6 @@ export const trucksService = {
       if (!response.ok)
         throw new Error(`HTTP error! status: ${response.status}`);
   
-      console.log(response.json);
       return await response.json();
     } catch (error) {
       console.error("Erreur lors de la récupération des camions :", error);

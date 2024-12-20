@@ -29,6 +29,11 @@ export class ShipmentsController {
     return this.shipmentsService.getShipmentById(data.shipment_id);
   }
 
+  @MessagePattern({ cmd: 'get_shipment_by_truck_id' })
+  getShipmentByTruckId(@Payload() data: { truck_id: number }) {
+    return this.shipmentsService.getShipmentByTruckId(data.truck_id);
+  }
+
   @MessagePattern({ cmd: 'create_shipment' })
   createShipment(
     @Payload()
@@ -102,5 +107,19 @@ export class ShipmentsController {
     },
   ) {
     return this.shipmentsService.updateShipmentEvent(data);
+  }
+
+  // Gestion des dates de début et de fin de livraison prévue
+  @MessagePattern({ cmd: 'get_delivery_dates' })
+  async getDeliveryDates(payload: { shipment_id: number }) {
+    const { shipment_id } = payload;
+    return this.shipmentsService.getDeliveryDates(shipment_id);
+  }
+
+  // Gestion des étapes intermédiaires (stops) d'une expédition
+  @MessagePattern({ cmd: 'get_shipment_stops' })
+  async getShipmentStops(payload: { shipment_id: number }) {
+    const { shipment_id } = payload;
+    return this.shipmentsService.getShipmentStops(shipment_id);
   }
 }

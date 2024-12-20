@@ -138,7 +138,6 @@ CREATE TABLE IF NOT EXISTS orders (
   updated_at TIMESTAMPTZ,
   deleted_at TIMESTAMPTZ
 );
-CREATE INDEX IF NOT EXISTS idx_orders_company ON orders(company_id);
 CREATE INDEX IF NOT EXISTS idx_orders_status ON orders(status_id);
 
 -- Détails de commande

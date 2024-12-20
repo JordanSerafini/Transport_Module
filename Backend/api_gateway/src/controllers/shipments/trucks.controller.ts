@@ -6,7 +6,6 @@ import {
   Delete,
   Body,
   Param,
-  Query,
   Inject,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -25,11 +24,10 @@ export class TrucksController {
 
   // Obtenir tous les camions pour une entreprise
   @Get()
-  getAllTrucks(@Query('company_id') company_id: number): Observable<any> {
-    return this.shipmentsService.send(
-      { cmd: 'get_all_trucks' },
-      { company_id },
-    );
+  async getAllTrucks() {
+    return await this.shipmentsService
+      .send({ cmd: 'get_all_trucks' }, {})
+      .toPromise();
   }
 
   // Obtenir les détails d'un camion spécifique

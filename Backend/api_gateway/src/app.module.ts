@@ -7,6 +7,7 @@ import { TrucksController } from './controllers/shipments/trucks.controller';
 import { DriversController } from './controllers/shipments/drivers.controller';
 import { ShipmentsController } from './controllers/shipments/shipments.controller';
 import { RoutesController } from './controllers/shipments/routes.controller';
+import { OrdersController } from './controllers/orders/orders.controller';
 
 @Module({
   imports: [
@@ -19,6 +20,11 @@ import { RoutesController } from './controllers/shipments/routes.controller';
         name: 'auth_service',
         transport: Transport.TCP,
         options: { port: 3001, host: 'auth_service' },
+      },
+      {
+        name: 'orders_service',
+        transport: Transport.TCP,
+        options: { port: 3007, host: 'orders_service' },
       },
       {
         name: 'shipments_service',
@@ -34,6 +40,7 @@ import { RoutesController } from './controllers/shipments/routes.controller';
     DriversController,
     ShipmentsController,
     RoutesController,
+    OrdersController,
   ],
 })
 export class AppModule {}

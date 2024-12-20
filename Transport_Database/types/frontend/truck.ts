@@ -8,7 +8,6 @@ export interface Truck {
   updated_at?: string; // ISO date string
   deleted_at?: string; // ISO date string
 }
-
   
 export interface TruckMaintenance {
   id: number;

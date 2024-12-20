@@ -53,6 +53,20 @@ export class ShipmentsService {
     }
   }
 
+  async getShipmentByTruckId(truck_id: number) {
+    const query = `
+      SELECT *
+      FROM shipments
+      WHERE truck_id = $1 AND deleted_at IS NULL
+    `;
+    try {
+      const result = await this.pool.query(query, [truck_id]);
+      return result.rows;
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch shipments.', error);
+    }
+  }
+
   async createShipment(data: {
     order_id: number;
     truck_id?: number;
@@ -242,6 +256,59 @@ export class ShipmentsService {
     } catch (error) {
       console.error('SQL Error:', error.message);
       throw new BadRequestException('Failed to update shipment event.', error);
+    }
+  }
+
+  // Méthode pour récupérer les dates de début et de fin prévues
+  async getDeliveryDates(shipment_id: number) {
+    const query = `
+      SELECT 
+        MIN(rs.arrival_eta) AS start_time,
+        MAX(rs.departure_eta) AS end_time
+      FROM shipments s
+      JOIN routes r ON s.route_id = r.id
+      JOIN route_stops rs ON r.id = rs.route_id
+      WHERE s.id = $1
+      GROUP BY s.id;
+    `;
+
+    try {
+      const result = await this.pool.query(query, [shipment_id]);
+      if (result.rows.length === 0) {
+        throw new BadRequestException(
+          'No delivery dates found for the given shipment.',
+        );
+      }
+      return result.rows[0];
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch delivery dates.', error);
+    }
+  }
+
+  // Méthode pour récupérer toutes les étapes (stops) d'une expédition
+  async getShipmentStops(shipment_id: number) {
+    const query = `
+      SELECT 
+        rs.arrival_eta, 
+        rs.departure_eta, 
+        rs.stop_order,
+        w.name AS warehouse_name
+      FROM shipments s
+      JOIN routes r ON s.route_id = r.id
+      JOIN route_stops rs ON r.id = rs.route_id
+      JOIN warehouses w ON rs.warehouse_id = w.id
+      WHERE s.id = $1
+      ORDER BY rs.stop_order ASC;
+    `;
+
+    try {
+      const result = await this.pool.query(query, [shipment_id]);
+      if (result.rows.length === 0) {
+        throw new BadRequestException('No stops found for the given shipment.');
+      }
+      return result.rows;
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch shipment stops.', error);
     }
   }
 }

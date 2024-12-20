@@ -1,9 +1,9 @@
-import Truckslist from "../../components/Shipments/Trucks/Truckslist"
+import ShipmentsPage from "../../components/Shipments/Shipments_page/ShipmentsPage"
 
 function Dashboard() {
   return (
     <div>
-      <Truckslist />
+      <ShipmentsPage />
     </div>
   )
 }

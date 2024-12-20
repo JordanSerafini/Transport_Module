@@ -8,6 +8,7 @@ import {
   Body,
   Query,
   Inject,
+  BadRequestException,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 
@@ -43,6 +44,18 @@ export class ShipmentsController {
     return this.shipmentsServiceClient.send(
       { cmd: 'get_shipment_by_id' },
       { shipment_id },
+    );
+  }
+
+  @Get('truck/:truck_id')
+  async getDriverByTruckId(@Param('truck_id') truck_id: string) {
+    const truck_idNumber = Number(truck_id);
+    if (isNaN(truck_idNumber)) {
+      throw new BadRequestException('The truck_id must be a valid number');
+    }
+    return this.shipmentsServiceClient.send(
+      { cmd: 'get_shipment_by_truck_id' },
+      { truck_id: truck_idNumber },
     );
   }
 
@@ -140,6 +153,24 @@ export class ShipmentsController {
     return this.shipmentsServiceClient.send(
       { cmd: 'update_shipment_event' },
       { shipment_id, event_id, ...body },
+    );
+  }
+
+  // Obtenir le début et la fin de la livraison prévue d'une expédition
+  @Get(':shipment_id/delivery-dates')
+  async getDeliveryDates(@Param('shipment_id') shipment_id: number) {
+    return this.shipmentsServiceClient.send(
+      { cmd: 'get_delivery_dates' },
+      { shipment_id },
+    );
+  }
+
+  // Obtenir toutes les étapes (stops) d'une route pour une expédition spécifique
+  @Get(':shipment_id/stops')
+  async getShipmentStops(@Param('shipment_id') shipment_id: number) {
+    return this.shipmentsServiceClient.send(
+      { cmd: 'get_shipment_stops' },
+      { shipment_id },
     );
   }
 }
