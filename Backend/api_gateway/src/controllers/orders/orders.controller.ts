@@ -26,4 +26,12 @@ export class OrdersController {
       { customer_id },
     );
   }
+
+  @Get('/shipment/:shipment_id')
+  async getOrdersByShipment(shipment_id: string) {
+    return this.ordersServiceClient.send(
+      { cmd: 'get_ordersByShipment' },
+      { shipment_id },
+    );
+  }
 }

@@ -25,4 +25,24 @@ export const ordersService = {
       throw new Error("Error while fetching drivers");
     }
   },
+
+  getByShipmentId: async (shipment_id: number): Promise<Order[]> => {
+    try {
+      const response = await fetch(`${url.current}/orders/shipment/${shipment_id}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      return await response.json();
+    } catch (error) {
+      console.error("Erreur lors de la récupération des commandes :", error);
+      throw new Error("Error while fetching drivers");
+    }
+  }
+  
 };
