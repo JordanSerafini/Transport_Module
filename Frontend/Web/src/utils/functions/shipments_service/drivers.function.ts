@@ -45,6 +45,26 @@ export const driversService = {
     }
   },
 
+  getByStatus: async (driver_status: string, page = 1, limit = 10): Promise<Driver[]> => {
+    try {
+      const query = new URLSearchParams({ page: String(page), limit: String(limit) });
+      const response = await fetch(`${url.current}/drivers/status/${driver_status}?${query.toString()}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      return await response.json();
+    } catch (error) {
+      console.error("Erreur lors de la récupération des chauffeurs par statut :", error);
+      throw new Error("Error while fetching drivers by status");
+    }
+  },
+
   // Obtenir un chauffeur par ID
   getById: async (driver_id: number): Promise<Driver> => {
     try {
@@ -124,4 +144,6 @@ export const driversService = {
       throw new Error("Error while deleting driver");
     }
   },
+
+  
 };
