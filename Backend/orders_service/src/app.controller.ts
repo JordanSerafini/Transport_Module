@@ -16,8 +16,8 @@ export class AppController {
     return this.appService.getOrdersByCustomer(data.customer_id);
   }
 
-  @MessagePattern({ cmd: 'get_ordersByShipment' })
-  getOrdersByShipment(data: { shipment_id: string }) {
-    return this.appService.getOrdersByShipment(data.shipment_id);
+  @MessagePattern({ cmd: 'get_byId' })
+  getOrdersByShipment(data: { order_id: string }) {
+    return this.appService.getById(data.order_id);
   }
 }

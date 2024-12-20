@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { Inject } from '@nestjs/common';
 
@@ -20,18 +20,15 @@ export class OrdersController {
   }
 
   @Get('/customer/:customer_id')
-  async getOrdersByCustomer(customer_id: string) {
+  async getOrdersByCustomer(@Param('customer_id') customer_id: string) {
     return this.ordersServiceClient.send(
       { cmd: 'get_ordersByCustomer' },
       { customer_id },
     );
   }
 
-  @Get('/shipment/:shipment_id')
-  async getOrdersByShipment(shipment_id: string) {
-    return this.ordersServiceClient.send(
-      { cmd: 'get_ordersByShipment' },
-      { shipment_id },
-    );
+  @Get('/shipment/:order_id')
+  async getOrdersByShipment(@Param('order_id') order_id: string) {
+    return this.ordersServiceClient.send({ cmd: 'get_byId' }, { order_id });
   }
 }
