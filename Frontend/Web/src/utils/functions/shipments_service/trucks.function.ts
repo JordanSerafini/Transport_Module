@@ -6,22 +6,23 @@ const token = Cookies.get("token");
 
 export const trucksService = {
   // Obtenir tous les camions pour une entreprise
-  getAll: async (): Promise<Truck[]> => {
+  getAll: async (page = 1, limit = 10, searchQuery?: string): Promise<Truck[]> => {
     try {
-      const response = await fetch(`${url.current}/trucks`, {
+      const query = new URLSearchParams({ page: String(page), limit: String(limit), ...(searchQuery && { searchQuery }) });
+      const response = await fetch(`${url.current}/trucks?${query.toString()}`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-      });  
-      if (!response.ok)
-        throw new Error(`HTTP error! status: ${response.status}`);
-  
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
       return await response.json();
     } catch (error) {
       console.error("Erreur lors de la récupération des camions :", error);
-      throw new Error("Error while fetching trucks");
+      throw new Error("Error while fetching drivers");
     }
   },
   

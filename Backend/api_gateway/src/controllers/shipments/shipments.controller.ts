@@ -173,4 +173,12 @@ export class ShipmentsController {
       { shipment_id },
     );
   }
+
+  @Get(':shipment_id/status')
+  async getShipmentStatus(@Param('shipment_id') shipment_id: number) {
+    return this.shipmentsServiceClient.send(
+      { cmd: 'get_shipment_status' },
+      { shipment_id },
+    );
+  }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Truck } from "../../../../../../Transport_Database/types/frontend/truck";
 import { trucksService } from "../../../utils/functions/shipments_service/trucks.function";
-import TrucktListCard from "../../Transport/truckListCard";
+import TrucktListCard from "../../../components/Transport/truckListCard";
 
 function Truckslist() {
   const [trucksList, setTrucksList] = useState<Truck[]>([]);

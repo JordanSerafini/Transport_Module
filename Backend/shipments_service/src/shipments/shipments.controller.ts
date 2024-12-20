@@ -122,4 +122,10 @@ export class ShipmentsController {
     const { shipment_id } = payload;
     return this.shipmentsService.getShipmentStops(shipment_id);
   }
+
+  @MessagePattern({ cmd: 'get_shipment_status' })
+  async getShipmentStatus(payload: { shipment_id: number }) {
+    const { shipment_id } = payload;
+    return this.shipmentsService.getShipmentStatus(shipment_id);
+  }
 }

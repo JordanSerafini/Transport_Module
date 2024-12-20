@@ -1,4 +1,4 @@
-import ShipmentsPage from "../../components/Shipments/Shipments_page/ShipmentsPage"
+import ShipmentsPage from "../Shipments/Shipments_page/ShipmentsPage"
 
 function Dashboard() {
   return (

@@ -262,5 +262,25 @@ export const ShipmentsService = {
       console.error("Erreur lors de la récupération des arrêts :", error);
       throw new Error("Error while fetching shipment stops");
     }
+  },
+
+  getStatus: async (shipment_id: number): Promise<{ status: string }> => {
+    try {
+      const response = await fetch(`${url.current}/shipments/${shipment_id}/status`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+      return await response.json();
+    } catch (error) {
+      console.error("Erreur lors de la récupération du statut de l'expédition :", error);
+      throw new Error("Error while fetching shipment status");
+    }
   }
+
 };

@@ -21,7 +21,7 @@ export class ShipmentsService {
       FROM shipments
       WHERE deleted_at IS NULL
       ${searchFilter}
-      ORDER BY created_at DESC
+      ORDER BY created_at ASC
       LIMIT $1 OFFSET $2
     `;
     const values = searchQuery
@@ -309,6 +309,29 @@ export class ShipmentsService {
       return result.rows;
     } catch (error) {
       throw new BadRequestException('Failed to fetch shipment stops.', error);
+    }
+  }
+
+  async getShipmentStatus(shipment_id: number) {
+    const query = `
+      SELECT 
+        ss.id AS status_id,
+        ss.code AS status_code,
+        ss.label AS status_label,
+        ss.is_final AS is_final
+      FROM shipments s
+      JOIN shipment_statuses ss ON s.status_id = ss.id
+      WHERE s.id = $1
+    `;
+
+    try {
+      const result = await this.pool.query(query, [shipment_id]);
+      if (result.rows.length === 0) {
+        throw new BadRequestException('Shipment not found.');
+      }
+      return result.rows[0];
+    } catch (error) {
+      throw new BadRequestException('Failed to fetch shipment status.', error);
     }
   }
 }
